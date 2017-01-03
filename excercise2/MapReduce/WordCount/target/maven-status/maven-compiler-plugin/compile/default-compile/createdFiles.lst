@@ -1,0 +1,3 @@
+com/aliyun/odps/mapred/WordCountMapper.class
+com/aliyun/odps/mapred/WordCountReducer.class
+com/aliyun/odps/mapred/App.class
