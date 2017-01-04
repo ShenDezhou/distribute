@@ -1,10 +1,12 @@
 package example;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+
 import com.aliyun.odps.data.Record;
 import com.aliyun.odps.data.TableInfo;
 import com.aliyun.odps.mapred.JobClient;
@@ -27,6 +29,7 @@ import com.aliyun.odps.mapred.utils.SchemaUtils;
 * Output table schema:
 * join_out (customer_name string, order_id bigint)
 */
+
 public class LeftOuterJoin {
     public static class LeftOuterJoinMapper extends MapperBase {
          private Record mapKey;
@@ -52,7 +55,7 @@ public class LeftOuterJoin {
             else
             {
              mapKey.set(0, record.get(1));//   cid
-             mapValue.set(2, record.getBigint(0));// o.id
+             mapValue.set(2, record.get(0));// o.id
             }
             mapKey.set(1, tag);          //   tag
             context.write(mapKey, mapValue);
@@ -60,36 +63,55 @@ public class LeftOuterJoin {
     }
     public static class LeftOuterJoinReducer extends ReducerBase {
         private Record result = null;
-        Map<String,List<Object[]>> leftValues = null;
+        private String country = "UK";
         @Override
         public void setup(TaskContext context) throws IOException {
            result = context.createOutputRecord();
-           leftValues = new HashMap<String,List<Object[]>>();
         }
         @Override
         public void reduce(Record key, Iterator<Record> values, TaskContext context) throws
         IOException {
+            String customer_id ="";
+            String customer_name = "";
+            boolean isMatch = false;
 
             while (values.hasNext()) {
               Record value = values.next();
-              long tag = (Long) key.get(1);
+              long tag = key.getBigint(1);
               if (tag == 0) {
-                if(leftValues.get(key.getString(0))==null)
-                  leftValues.put(key.getString(0),new ArrayList<Object[]>());
-                else
-                  leftValues.get(key.getString(0)).add(value.toArray().clone());
-              } else {
-                for (Object[] leftValue : leftValues.get(key.getString(0))){
-                  int index = 0;
-                  result.set(index++, leftValue[0]);
-                  if(leftValue[1].equals("UK"))
-                      result.set(index++, value.getBigint(2));
-                  context.write(result);  
+                if(country.equals(value.getString(1)))
+                {
+                  customer_id = key.getString(0);
+                  customer_name = value.getString(0);
                 }
-                leftValues.remove(key.getString(0));
+                else{
+                  // non-UK customers 
+                  result.set(0,value.getString(0));
+                  result.set(1,null);
+                  context.write(result);
+                }
+              } else {
+                
+                if(customer_id.equals(key.getString(0)))
+                {
+                    //UK customers with orders matching
+                    result.set(0,customer_name);
+                    result.set(1,value.getBigint(2));
+                    context.write(result);
+                    isMatch = true;
+                }
               }
             }
+            //UK customer which has no matching orders
+            if(!isMatch && !customer_id.isEmpty())
+            {
+              result.set(0,customer_name);
+              result.set(1,null);
+              context.write(result);
+            }
         }
+
+        private void outputCustomer(String name, TaskContext context) throws IOException{}
     }
 
     public static void main(String[] args)
