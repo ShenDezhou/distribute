@@ -130,3 +130,74 @@ bool Worker::ReadTable(const string& tableName, string& content)
     }
     return true;
 }
+
+bool Worker::CommitTable(const string& tableName)
+{
+    printf("enter worker commit table\n");
+    map<string, vector<string> >::iterator it;
+    if ((it = mTableFilesTmpFilesToCommit.find(tableName)) == mTableFilesTmpFilesToCommit.end())
+    {
+        cerr << "Can not find table name " << tableName << " from worker " << ToString(mWorkerId) << " when Commit table" << endl;
+        return false;
+    }
+
+    if(it!=mTableFilesTmpFilesToCommit.end())
+    {
+        map<string, vector<string> >::iterator old_files_it = mTableFiles.find(tableName);
+        if(old_files_it!=mTableFiles.end())
+        {
+            vector<string> files = old_files_it->second;
+            for(size_t i=0; i < files.size(); ++i)
+            {
+                DeleteFile(files[i]);
+            }    
+        }
+        
+    }
+
+    mTableFiles[tableName].swap(mTableFilesTmpFilesToCommit[tableName]) ;
+    mTableFilesTmpFilesToCommit.erase(it);
+    return true;
+}
+
+bool Worker::RollbackTable(const string& tableName)
+{
+    printf("enter worker rollback table\n");
+    map<string, vector<string> >::iterator it;
+    if ((it = mTableFilesTmpFilesToCommit.find(tableName)) == mTableFilesTmpFilesToCommit.end())
+    {
+        cerr << "Can not find table name " << tableName << " from worker " << ToString(mWorkerId) << " when Rollback table" << endl;
+        return false;
+    }
+    if(it!=mTableFilesTmpFilesToCommit.end())
+    {
+        vector<string> files = mTableFilesTmpFilesToCommit[tableName] ;
+        for(size_t i=0; i < files.size(); ++i)
+        {
+            DeleteFile(files[i]);
+        }
+    }
+    mTableFilesTmpFilesToCommit.erase(it);
+    
+    return true;
+}
+
+bool Worker::DeleteTable(const string& tableName)
+{
+    map<string, vector<string> >::iterator it;
+    if ((it = mTableFiles.find(tableName)) == mTableFiles.end())
+    {
+        cerr << "Can not find table name " << tableName << " from worker " << ToString(mWorkerId) << " when read table" << endl;
+        return false;
+    }
+
+    vector<string> files = it->second;
+    for (size_t i = 0; i < files.size(); ++i)
+    {
+        if (!DeleteFile(files[i]))
+        {
+            return false;
+        }
+    }
+    return true;
+}

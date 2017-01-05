@@ -4,6 +4,9 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <cmath>
+#include <cstdio>
+#include <algorithm>
 
 #include "worker.h"
 
@@ -19,7 +22,7 @@ public:
 
     ~Server() {}
     
-    bool UpdateTable(const std::string& tableName, const std::string& content);
+    bool UpdateTable(const std::string& content, const std::string& tableName);
     
 protected:
     std::map<size_t, WorkerPtr> mWorkers;

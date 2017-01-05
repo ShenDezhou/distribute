@@ -1,1 +1,1 @@
-Program('upload', ['main.cpp', 'upload.cpp', 'test.cpp', 'worker.cpp', 'uuid.cpp'])
+Program('upload', ['main.cpp', 'test.cpp', 'worker.cpp', 'uuid.cpp', 'upload.cpp'])

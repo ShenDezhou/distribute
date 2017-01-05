@@ -4,6 +4,8 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <cmath>
+#include <cstdio>
 
 #include "worker.h"
 
@@ -22,8 +24,8 @@ public:
     bool UpdateTable(const std::string& tableName, const std::string& content);
     
 protected:
-    std::map<size_t, WorkerPtr> mWorkers;
-    std::map<std::string, std::vector<size_t> > mTables;
+    std::map<size_t, WorkerPtr> mWorkers;//workerID:workerPtr
+    std::map<std::string, std::vector<size_t> > mTables;//tablename:list of workerID
 };
 }
 

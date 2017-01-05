@@ -12,8 +12,6 @@ public:
     static void TestUploadNegetive();
 private:
     static bool TestUploadInternal(TestServer* testServer);
-    static bool TestWriteInternal(TestServer* testServer);
-    static bool TestRollInternal(TestServer* testServer);
 };
     
 }

@@ -7,6 +7,8 @@
 
 namespace homework
 {
+const long BLOCK_SIZE = 128l*1024l*1024l;
+
 class Worker
 {
 public:
@@ -18,6 +20,11 @@ public:
 
     bool ReadTable(const std::string& tableName, std::string& content);
 
+    bool CommitTable(const std::string& tableName);
+
+    bool RollbackTable(const std::string& tableName);
+
+    bool DeleteTable(const std::string& tableName);
 protected:
     static std::string GetFileId();
     
@@ -34,6 +41,8 @@ protected:
     size_t mWorkerId;
     std::map<std::string, std::vector<std::string> > mTableFiles;
     std::map<std::string, std::string> mFiles;
+    std::map<std::string, std::vector<std::string> > mTableFilesTmpFilesToCommit;
+
 };
 typedef Worker* WorkerPtr;
 

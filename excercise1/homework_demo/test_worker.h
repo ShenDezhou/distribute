@@ -21,17 +21,5 @@ private:
     }
 };
 
-class TestWorkerWrite : public Worker
-{
-public:
-    TestWorkerWrite(size_t workerId) : Worker(workerId)
-    {}
-
-private:
-    bool WriteToFile(const std::string& fileId, const std::string& content)
-    {
-        return false;
-    }
-};
 }
 #endif
