@@ -1,0 +1,31 @@
+图计算部分的实验，要求用PowerGraph实现K-center clustering。这是一个NP问题，我们希望尽可能高效地求得尽可能优的解。请提交程序代码和实验报告，报告请描述你的算法，运行环境，并提供K＝2，3，4，5时两个数据集对应的计算结果（the maximum radius of the clusters）和运行时间。具体要求如下：
+
+Divide the nodes of an unweighted, undirected graph into k (2~5) disjoint clusters so that the maximum radius of the clusters is minimized. NP-hard problem and hence a heuristic solution is desired.
+
+System: 
+PowerGraph https://github.com/dato-code/PowerGraph
+
+Data: 
+SNAP http://snap.stanford.edu/data/index.html
+ego-Facebook
+Nodes	4039
+Edges	88234
+
+ego-Twitter
+Nodes	81306
+Edges	1768149
+
+Reference
+Space and Time Efficient Parallel Graph Decomposition, Clustering, and Diameter Approximation SPAA ‘11
+
+
+nodeId.edges : The edges in the ego network for the node 'nodeId'. Edges are undirected for facebook, and directed (a follows b) for twitter and gplus. The 'ego' node does not appear, but it is assumed that they follow every node id that appears in this file.
+
+nodeId.circles : The set of circles for the ego node. Each line contains one circle, consisting of a series of node ids. The first entry in each line is the name of the circle.
+
+nodeId.feat : The features for each of the nodes that appears in the edge file.
+
+nodeId.egofeat : The features for the ego user.
+
+nodeId.featnames : The names of each of the feature dimensions. Features are '1' if the user has this property in their profile, and '0' otherwise. This file has been anonymized for facebook users, since the names of the features would reveal private data.
+
