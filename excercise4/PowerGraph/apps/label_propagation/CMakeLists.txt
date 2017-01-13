@@ -1,2 +1,0 @@
-project(label_propagation)
-add_graphlab_executable(label_propagation label_propagation.cpp)
